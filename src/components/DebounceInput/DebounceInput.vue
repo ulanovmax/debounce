@@ -1,14 +1,22 @@
-<template lang="pug">
-input(placeholder="Введите что нибудь..", v-model.trim="inputValue")
-p Текущее значение:
-  span {{ (inputValue === '' ? 'Не указано' : inputValue) }}
+<template>
+  <input placeholder="Введите что-нибудь..." :value="modelValue" @input="updateValue">
 </template>
 
-
 <script setup>
-import {ref} from "vue";
+import {debounce} from "../../utils/debounce.utils.js";
 
-const inputValue = ref()
+const props = defineProps({
+  modelValue: {
+    type: [String, Number],
+    required: true
+  }
+})
+
+const emits = defineEmits(['update:modelValue']);
+
+const updateValue = (e) => e.target.value ? debounceUpdate(e) : emits('update:modelValue', e.target.value);
+
+const debounceUpdate = debounce((e) => emits('update:modelValue', e.target.value), 500);
 </script>
 
 <style lang="scss">
